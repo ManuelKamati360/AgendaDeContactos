@@ -1,0 +1,8 @@
+@import url(../base.css);
+
+.card-contato:hover{
+
+    background-color: var(--cor-verde-bege);
+    box-shadow: var(--sombra-expandida);
+    cursor: progress;
+}

@@ -1,0 +1,53 @@
+/* Font usada no prototipo do projecto */
+@font-face {
+    font-family: 'segoe_ui_regular';
+    src: url('/../fonts/segoe_ui-webfont.woff2') format('woff2'),
+         url('../fonts/segoe_ui-webfont.woff') format('woff'),
+         url('../fonts/segoe_ui.ttf') format('ttf');
+    font-weight: normal;
+    font-style: normal;
+} @font-face {
+    font-family: 'segoe_ui_bold';
+    src: url('../fonts/segoe_ui_bold-webfont.woff2') format('woff2'),
+         url('../fonts/segoe_ui_bold-webfont.woff') format('woff'),
+         url('../fonts/segoe_ui_bold.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Variaveis Globais do Projecto */
+:root{
+    /* Cores */
+    --cor-azul-escuro: #1C507D; /*Usada como cor do título da página*/ 
+    --cor-azul-claro: #3C9EF3; /*Usada como cor do botão de buscar*/ 
+    --cor-verde-lima: #3CF581; /*Usada como cor do botão de add*/
+    --cor-verde: #1ed05f; /*Usada como cor do botão de adicionar*/ 
+    --cor-amarelo-claro: #d5dc0b; /*Usada como fundo do botão editar contato do modal*/
+    --cor-vermelho-claro: #FF0000; 
+    --cor-verde-bege: #F0F8F3; /*Usada como fundo dos cards de contato*/ 
+    --cor-azul-translucido: #cddeeb25; /*Usada como fundo do quadro de contatos*/
+    --cor-azul-claro-translucido: #3c9ef311; /*Usada como fundo da barra de pesquisa*/ 
+    --cor-cinza: #707070;
+    --cor-branco: #FFFFFF;
+
+    /* Fontes */
+    --font-base-normal: segoe_ui_regular, Arial, sans-serif;
+    --font-base-bold: segoe_ui_bold, Arial, sans-serif;
+
+    /* Tamanhos de imagens */
+    --icones-de-accao: 40px;
+
+    /* Retoques visuais */
+    --borda-arredondadas: 29px;
+    --sombra-padrao: 2px 5px 6px -1px rgba(150, 150, 150, 0.5);
+    --sombra-expandida: 4px 10px 12px -2px rgba(150, 150, 150, 0.5);
+}
+
+
+/* Definição da página base do projecto */
+body{
+    background-color: var(--cor-branco);
+    margin: 0; /* Remove margens padrão do navegador */
+    padding: 0; /* Remove espaçamento interno padrão do navegador */
+    overflow: hidden; /* Remove barras de rolagem da página */
+}

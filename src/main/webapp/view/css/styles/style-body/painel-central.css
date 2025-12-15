@@ -1,0 +1,94 @@
+@import url(../base.css);
+
+#conteiner-painel-central{
+    background-color: var(--cor-azul-translucido);
+    
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* 4 colunas*/
+    grid-template-rows: 1fr 1fr 1fr 1fr; /* 4 linhas*/
+    gap: 9px 9px; /*espaçamento entre linhas e colunas */
+    
+    overflow-y: auto; /*Rolagem de conteudo de um conteiner, na vertical...*/
+    border-radius: var(--borda-arredondadas);
+    scrollbar-gutter: stable both-edges; /*Afasta o scrollbar da borda do conteiner*/
+    padding: 10px;
+    margin-top: 20px;
+
+    /*Desativando a scrollbar em todos os navegadores*/
+    -ms-overflow-style: none;  /* IE/Edge antigo */
+    scrollbar-width: none;     /* Firefox */
+}#conteiner-painel-central::-webkit-scrollbar{
+    display: none; /* Chrome, Safari, Edge moderno */
+}
+
+.card-contato-link{
+    text-decoration: none;
+    color: inherit;
+}
+
+.card-contato{
+    background-color: var(--cor-verde-bege);
+    box-shadow: var(--sombra-padrao);
+    font-family: var(--font-base-normal);
+    font-size: 14px;
+    width: 220px;
+    height: 225px;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    padding: 2px;
+    border-radius: var(--borda-arredondadas);
+}.card-contato a{
+    justify-items: center;
+}
+
+.card-contato-logo{
+    background-color: var(--cor-azul-translucido);
+    color: var(--cor-branca);
+    font-family: var(--font-base-negrito);
+    font-size: 50px;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    cursor: pointer;
+}.card-contato-logo label{
+    user-select: none; /* Impede a seleção do texto ao clicar e arrastar */
+    cursor: pointer;
+}
+.card-contato-info{
+    cursor: pointer;
+}.card-contato-info p, label{
+    cursor: pointer;
+}
+
+.btn-editar-contato{
+    width: var(--icones-de-accao);
+    height: var(--icones-de-accao);
+    margin-right: 15px;
+    padding: 0;
+    background-image: url(../../../img/Edit-v2.png);
+    background-color: transparent;
+    background-position: left center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-deletar-contato{
+    width: var(--icones-de-accao);
+    height: var(--icones-de-accao);
+    margin-left: 15px;
+    padding: 0;
+    background-image: url(../../../img/Delete.png);
+    background-color: transparent;
+    background-position: left center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+}
