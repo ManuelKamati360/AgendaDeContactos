@@ -53,7 +53,7 @@ public class Contacto {
 	
 	public Contacto() {
 		this._nome = "";
-		this._dataNascimento = new Date();
+		this._dataNascimento = null;
 		this._telefone = "";
 		this._email = "";
 		this._endereco = "";
