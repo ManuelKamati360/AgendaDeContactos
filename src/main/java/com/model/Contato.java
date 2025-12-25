@@ -2,9 +2,10 @@ package com.model;
 
 import java.util.Date;
 
-public class Contacto {
+public class Contato {
 	
 	// Atributos...
+	private int _id;
 	private String _nome;
 	private Date _dataNascimento;
 	private String _telefone;
@@ -14,6 +15,8 @@ public class Contacto {
 	private String _cidade;
 	
 	// Getters e Setters...
+	public int getId() { return _id; }
+	public void setId(int _id) { this._id = _id; }
 	public String getNome() { return _nome;	}
 	public void setNome(String _nome) {	this._nome = _nome;	}
 	public Date getDataNascimento() { return _dataNascimento; }
@@ -30,7 +33,7 @@ public class Contacto {
 	public void setCidade(String _cidade) { this._cidade = _cidade;	}
 	
 	// Sobrecargas do Construtor...
-	public Contacto(String nome, Date dataNascimento, String telefone, String email, String endereco, String estado, String cidade) {
+	public Contato(String nome, Date dataNascimento, String telefone, String email, String endereco, String estado, String cidade) {
 		this._nome = nome;
 		this._dataNascimento = dataNascimento;
 		this._telefone = telefone;
@@ -40,18 +43,19 @@ public class Contacto {
 		this._cidade = cidade;
 	}
 	
-	public Contacto(String nome, String telefone, String email) {
+	public Contato(int id, String nome, String telefone, String email) {
+		this._id = id;
 		this._nome = nome;
 		this._telefone = telefone;
 		this._email = email;
 	}
 	
-	public Contacto(String nome, String telefone) {
+	public Contato(String nome, String telefone) {
 		this._nome = nome;
 		this._telefone = telefone;
 	}
 	
-	public Contacto() {
+	public Contato() {
 		this._nome = "";
 		this._dataNascimento = null;
 		this._telefone = "";
@@ -60,4 +64,5 @@ public class Contacto {
 		this._estado = "";
 		this._cidade = "";
 	}
+
 }
