@@ -4,11 +4,13 @@ import com.dao.ContatoDAO;
 import com.model.Contato;
 import java.util.List;
 
+import javax.naming.NamingException;
+
 public class ContatoService {
     private ContatoDAO dao = new ContatoDAO();
 
     // Listar todos os contactos
-    public List<Contato> listarTodos() {
+    public List<Contato> listarTodos() throws NamingException {
     	
         return dao.listarTodos();
     }
@@ -33,4 +35,9 @@ public class ContatoService {
     	
         return dao.atualizar(c);
     }
+
+	public Contato buscarPorId(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

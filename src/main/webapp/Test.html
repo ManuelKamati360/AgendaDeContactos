@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Agenda de Contatos</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f4f4f4; }
+    #mensagem { margin-top: 15px; font-weight: bold; }
+    .erro { color: red; }
+    .sucesso { color: green; }
+  </style>
+</head>
+<body>
+  <h1>Lista de Contatos</h1>
+  <div id="mensagem"></div>
+  <table id="contatosTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Data de nascimento</th>
+        <th>Telefone</th>
+        <th>Email</th>
+		<th>Endereço</th>
+		<th>Estado</th>
+		<th>Cidade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Contatos serão inseridos aqui via JS -->
+    </tbody>
+  </table>
+
+  <script>
+    function mostrarMensagem(texto, tipo) {
+      const div = document.getElementById("mensagem");
+      div.textContent = texto;
+      div.className = tipo; // "erro" ou "sucesso"
+    }
+
+    // Função para carregar contatos
+    function carregarContatos() {
+      fetch("/AgendaDeContactos/api/contatos")
+        .then(res => {
+          if (res.status === 200) {
+            return res.json();
+          } else {
+            throw new Error("Erro ao carregar contatos (status " + res.status + ")");
+          }
+        })
+        .then(data => {
+          const tbody = document.querySelector("#contatosTable tbody");
+          tbody.innerHTML = "";
+          data.forEach(c => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${c.id}</td>
+              <td>${c.nome}</td>
+              <td>${c.dataNascimento}</td>
+              <td>${c.telefone}</td>
+              <td>${c.email}</td>
+              <td>${c.endereco}</td>
+              <td>${c.estado}</td>
+              <td>${c.cidade}</td>
+            `;
+            tbody.appendChild(row);
+          });
+          mostrarMensagem("Contatos carregados com sucesso!", "sucesso");
+        })
+        .catch(err => {
+          mostrarMensagem(err.message, "erro");
+        });
+    }
+
+    // Exemplo de cadastro (POST)
+    function cadastrarContato() {
+      fetch("/AgendaDeContactos/api/contatos", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "nome=Teste&email=teste@teste.com&telefone=123456"
+      })
+      .then(res => {
+        if (res.status === 201) {
+          mostrarMensagem("Contato cadastrado com sucesso!", "sucesso");
+          carregarContatos(); // atualiza tabela
+        } else if (res.status === 400) {
+          return res.json().then(err => {
+            mostrarMensagem("Erro: " + err.erro, "erro");
+          });
+        }
+      })
+      .catch(err => mostrarMensagem("Falha na requisição: " + err.message, "erro"));
+    }
+
+    // Chama a função ao carregar a página
+    carregarContatos();
+
+    // Para testar cadastro automático
+    // cadastrarContato();
+  </script>
+</body>
+</html>

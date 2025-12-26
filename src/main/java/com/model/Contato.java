@@ -2,16 +2,34 @@ package com.model;
 
 import java.util.Date;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Contato {
 	
 	// Atributos...
+	
+	@SerializedName("id")
 	private int _id;
+	
+	@SerializedName("nome")
 	private String _nome;
+	
+	@SerializedName("dataNascimento")
 	private Date _dataNascimento;
+	
+	@SerializedName("telefone")
 	private String _telefone;
+	
+	@SerializedName("email")
 	private String _email;
+	
+	@SerializedName("endereco")
 	private String _endereco;
+	
+	@SerializedName("estado")
 	private String _estado;
+	
+	@SerializedName("cidade")
 	private String _cidade;
 	
 	// Getters e Setters...
@@ -33,26 +51,24 @@ public class Contato {
 	public void setCidade(String _cidade) { this._cidade = _cidade;	}
 	
 	// Sobrecargas do Construtor...
-	public Contato(String nome, Date dataNascimento, String telefone, String email, String endereco, String estado, String cidade) {
-		this._nome = nome;
-		this._dataNascimento = dataNascimento;
-		this._telefone = telefone;
-		this._email = email;
-		this._endereco = endereco;
-		this._estado = estado;
-		this._cidade = cidade;
+	public Contato(int _id, String _nome, String _email, String _telefone, Date _dataNascimento, String _endereco, String _estado, String _cidade) {
+		this._id = _id;
+		this._nome = _nome;
+		this._dataNascimento = _dataNascimento;
+		this._telefone = _telefone;
+		this._email = _email;
+		this._endereco = _endereco;
+		this._estado = _estado;
+		this._cidade = _cidade;
 	}
 	
-	public Contato(int id, String nome, String telefone, String email) {
-		this._id = id;
-		this._nome = nome;
-		this._telefone = telefone;
-		this._email = email;
-	}
-	
-	public Contato(String nome, String telefone) {
-		this._nome = nome;
-		this._telefone = telefone;
+	public Contato(int _id, String _nome, String _email, String _telefone, String _endereco, String _estado, String _cidade) {
+		this._nome = _nome;
+		this._telefone = _telefone;
+		this._email = _email;
+		this._endereco = _endereco;
+		this._estado = _estado;
+		this._cidade = _cidade;
 	}
 	
 	public Contato() {

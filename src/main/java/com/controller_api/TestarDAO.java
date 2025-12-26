@@ -5,6 +5,9 @@ import com.model.Contato;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+
+import javax.naming.NamingException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,7 +25,13 @@ public class TestarDAO extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         ContatoDAO dao = new ContatoDAO();
-        List<Contato> lista = dao.listarTodos();
+        List<Contato> lista = null;
+		try {
+			lista = dao.listarTodos();
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         out.println("<h2>Lista de Contactos</h2>");
         out.println("<ul>");
