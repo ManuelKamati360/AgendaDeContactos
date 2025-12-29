@@ -10,6 +10,7 @@
     #mensagem { margin-top: 15px; font-weight: bold; }
     .erro { color: red; }
     .sucesso { color: green; }
+    button { margin: 2px; }
   </style>
 </head>
 <body>
@@ -23,9 +24,10 @@
         <th>Data de nascimento</th>
         <th>Telefone</th>
         <th>Email</th>
-		<th>Endereço</th>
-		<th>Estado</th>
-		<th>Cidade</th>
+        <th>Endereço</th>
+        <th>Estado</th>
+        <th>Cidade</th>
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody>
@@ -43,13 +45,7 @@
     // Função para carregar contatos
     function carregarContatos() {
       fetch("/AgendaDeContactos/api/contatos")
-        .then(res => {
-          if (res.status === 200) {
-            return res.json();
-          } else {
-            throw new Error("Erro ao carregar contatos (status " + res.status + ")");
-          }
-        })
+        .then(res => res.json())
         .then(data => {
           const tbody = document.querySelector("#contatosTable tbody");
           tbody.innerHTML = "";
@@ -58,47 +54,118 @@
             row.innerHTML = `
               <td>${c.id}</td>
               <td>${c.nome}</td>
-              <td>${c.dataNascimento}</td>
+              <td>${c.dataNascimento || ""}</td>
               <td>${c.telefone}</td>
               <td>${c.email}</td>
               <td>${c.endereco}</td>
               <td>${c.estado}</td>
               <td>${c.cidade}</td>
+              <td>
+                <button onclick="editarLinha(this, ${c.id})">Editar</button>
+                <button onclick="removerContato(${c.id})">Excluir</button>
+              </td>
             `;
             tbody.appendChild(row);
           });
           mostrarMensagem("Contatos carregados com sucesso!", "sucesso");
         })
-        .catch(err => {
-          mostrarMensagem(err.message, "erro");
-        });
+        .catch(err => mostrarMensagem("Erro: " + err.message, "erro"));
     }
 
-    // Exemplo de cadastro (POST)
-    function cadastrarContato() {
-      fetch("/AgendaDeContactos/api/contatos", {
-        method: "POST",
+    // Função para editar inline
+    function editarLinha(botao, id) {
+      const row = botao.closest("tr");
+      const cells = row.querySelectorAll("td");
+
+      // Transformar células em inputs
+      const nome = cells[1].textContent;
+      const dataNascimento = cells[2].textContent;
+      const telefone = cells[3].textContent;
+      const email = cells[4].textContent;
+      const endereco = cells[5].textContent;
+      const estado = cells[6].textContent;
+      const cidade = cells[7].textContent;
+
+      cells[1].innerHTML = `<input value="${nome}">`;
+      cells[2].innerHTML = `<input type="date" value="${formatarDataISO(dataNascimento)}">`;
+      cells[3].innerHTML = `<input value="${telefone}">`;
+      cells[4].innerHTML = `<input value="${email}">`;
+      cells[5].innerHTML = `<input value="${endereco}">`;
+      cells[6].innerHTML = `<input value="${estado}">`;
+      cells[7].innerHTML = `<input value="${cidade}">`;
+
+      // Substituir botões
+      cells[8].innerHTML = `
+        <button onclick="salvarEdicao(${id}, this)">Salvar</button>
+        <button onclick="carregarContatos()">Cancelar</button>
+      `;
+    }
+
+    // Função para salvar edição
+    function salvarEdicao(id, botao) {
+      const row = botao.closest("tr");
+      const inputs = row.querySelectorAll("input");
+
+      const dados = new URLSearchParams();
+      dados.append("id", id);
+      dados.append("nome", inputs[0].value);
+      dados.append("dataNascimento", inputs[1].value);
+      dados.append("telefone", inputs[2].value);
+      dados.append("email", inputs[3].value);
+      dados.append("endereco", inputs[4].value);
+      dados.append("estado", inputs[5].value);
+      dados.append("cidade", inputs[6].value);
+
+      fetch("/AgendaDeContactos/api/contatos?id=" + id, {
+        method: "PUT",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "nome=Teste&email=teste@teste.com&telefone=123456"
+        body: dados.toString()
       })
       .then(res => {
-        if (res.status === 201) {
-          mostrarMensagem("Contato cadastrado com sucesso!", "sucesso");
-          carregarContatos(); // atualiza tabela
-        } else if (res.status === 400) {
-          return res.json().then(err => {
-            mostrarMensagem("Erro: " + err.erro, "erro");
-          });
+        if (res.status === 200) {
+          mostrarMensagem("Contato atualizado com sucesso!", "sucesso");
+          carregarContatos();
+        } else {
+          mostrarMensagem("Erro ao atualizar contato", "erro");
         }
       })
-      .catch(err => mostrarMensagem("Falha na requisição: " + err.message, "erro"));
+      .catch(err => mostrarMensagem("Falha: " + err.message, "erro"));
     }
 
-    // Chama a função ao carregar a página
-    carregarContatos();
+    // Função para remover contato
+    function removerContato(id) {
+      if (!confirm("Tem certeza que deseja excluir o contato " + id + "?")) return;
+      fetch("/AgendaDeContactos/api/contatos?id=" + id, {
+        method: "DELETE"
+      })
+      .then(res => {
+        if (res.status === 204) {
+          mostrarMensagem("Contato removido com sucesso!", "sucesso");
+          carregarContatos();
+        } else {
+          mostrarMensagem("Erro ao remover contato", "erro");
+        }
+      });
+    }
+    
+    function formatarDataISO(dataStr) {
+    	  const partes = dataStr.split(" ");
+    	  if (partes.length === 3) {
+    	    const meses = {
+    	      "jan.": "01", "fev.": "02", "mar.": "03", "abr.": "04",
+    	      "mai.": "05", "jun.": "06", "jul.": "07", "ago.": "08",
+    	      "set.": "09", "out.": "10", "nov.": "11", "dez.": "12"
+    	    };
+    	    const dia = partes[1].replace(",", "");
+    	    const mes = meses[partes[0]] || "01";
+    	    const ano = partes[2];
+    	    return `${ano}-${mes}-${dia.padStart(2, "0")}`;
+    	  }
+    	  return "";
+    	}
 
-    // Para testar cadastro automático
-    // cadastrarContato();
+    // Carregar contatos ao abrir página
+    carregarContatos();
   </script>
 </body>
 </html>

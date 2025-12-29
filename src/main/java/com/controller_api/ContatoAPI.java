@@ -12,6 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -64,8 +67,25 @@ public class ContatoAPI extends HttpServlet {
             throws ServletException, IOException {
         Contato c = new Contato();
         c.setNome(request.getParameter("nome"));
-        c.setEmail(request.getParameter("email"));
         c.setTelefone(request.getParameter("telefone"));
+
+        // Data de Nascimento
+        String dataStr = request.getParameter("dataNascimento");
+        Date data = null;
+        if (dataStr != null && !dataStr.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                data = sdf.parse(dataStr);
+            } catch (ParseException e) {
+                System.err.println("❌ Erro ao converter data: " + dataStr);
+            }
+        }
+        c.setDataNascimento(data);
+
+        c.setEmail(request.getParameter("email"));   
+        c.setEndereco(request.getParameter("endereco"));
+        c.setEstado(request.getParameter("estado"));
+		c.setCidade(request.getParameter("cidade"));
 
         boolean sucesso = service.salvar(c);
 
@@ -89,12 +109,29 @@ public class ContatoAPI extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         try {
-            int id = Integer.parseInt(pathInfo.substring(1));
             Contato c = new Contato();
+            int id = Integer.parseInt(pathInfo.substring(1));
             c.setId(id);
-            c.setNome(request.getParameter("nome"));
-            c.setEmail(request.getParameter("email"));
+            c.setNome(request.getParameter("nome"));            
             c.setTelefone(request.getParameter("telefone"));
+            
+            // Data de Nascimento
+            String dataStr = request.getParameter("dataNascimento");
+            Date data = null;
+            try {
+                if (dataStr != null && !dataStr.isEmpty()) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    data = sdf.parse(dataStr);
+                }
+            } catch (ParseException e) {
+                System.err.println("❌ Erro ao converter data: " + dataStr);
+            }
+            c.setDataNascimento(data);
+
+            c.setEndereco(request.getParameter("endereco"));
+            c.setEstado(request.getParameter("estado"));
+			c.setCidade(request.getParameter("cidade"));
+            c.setEmail(request.getParameter("email"));
 
             boolean sucesso = service.atualizar(c);
 
@@ -120,6 +157,8 @@ public class ContatoAPI extends HttpServlet {
 
         try {
             int id = Integer.parseInt(pathInfo.substring(1));
+//        		Contato c = new Contato();
+//        		c.setId(Integer.parseInt(request.getParameter("id")));
             boolean sucesso = service.remover(id);
 
             if (sucesso) {

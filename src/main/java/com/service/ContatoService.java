@@ -1,41 +1,70 @@
 package com.service;
 
 import com.dao.ContatoDAO;
+import com.database.MySqlConnectionEE;
 import com.model.Contato;
+
+import java.sql.Connection;
 import java.util.List;
 
 import javax.naming.NamingException;
 
 public class ContatoService {
-    private ContatoDAO dao = new ContatoDAO();
 
     // Listar todos os contactos
     public List<Contato> listarTodos() throws NamingException {
-    	
-        return dao.listarTodos();
+        try (Connection conn = MySqlConnectionEE.getConnection()) {
+            ContatoDAO dao = new ContatoDAO(conn);
+            return dao.listarTodos();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     // Salvar contacto com validação
     public boolean salvar(Contato c) {
-        if (c.getEmail() == null || !c.getEmail().contains("@")) {
-            return false; // regra de negócio simples
+        if (c.getNome() == null || c.getNome().isEmpty() ||
+            c.getTelefone() == null || c.getTelefone().isEmpty() ||
+            c.getEmail() == null || c.getEmail().isEmpty()) {
+            System.out.println("❌ Falha na validação: campos obrigatórios ausentes");
+            return false;
         }
-        
-        return dao.inserir(c);
+
+        try (Connection conn = MySqlConnectionEE.getConnection()) {
+            ContatoDAO dao = new ContatoDAO(conn);
+            return dao.inserir(c);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
+ 
     // Remover contacto
     public boolean remover(int id) {
-    	
-        return dao.remover(id);
+        try (Connection conn = MySqlConnectionEE.getConnection()) {
+            ContatoDAO dao = new ContatoDAO(conn);
+            return dao.remover(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+       
     }
 
     // Atualizar contacto
     public boolean atualizar(Contato c) {
-    	
-        return dao.atualizar(c);
+        try (Connection conn = MySqlConnectionEE.getConnection()) {
+            ContatoDAO dao = new ContatoDAO(conn);
+            return dao.atualizar(c);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-
+    
+    // Este m]etodo, ser]a usado para full-text search no futuro...
 	public Contato buscarPorId(int id) {
 		// TODO Auto-generated method stub
 		return null;

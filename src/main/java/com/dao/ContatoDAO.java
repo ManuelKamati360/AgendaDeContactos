@@ -18,24 +18,21 @@ public class ContatoDAO {
 	
 	private Connection conn;
 	
-	// Sobrecarga do construtor...
+	// Construtor...
 	public ContatoDAO(Connection conn) {
 		this.conn = conn;
 	}
-	public ContatoDAO() {
-		// Construtor vazio
-	}
 	
+	// Listar todos os contactos
 	public List<Contato> listarTodos() throws NamingException { 
 		
 		List<Contato> contatosList = new ArrayList<>(); 
 		
 		try { 
-			InitialContext ctx = new InitialContext(); 
-			DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/agendaDB"); 
+ 
 			String sqlQuery = "SELECT id, nome, dataNascimento, telefone, email, endereco, estado, cidade FROM contato LIMIT 10";
 
-			try (Connection conn = ds.getConnection(); 
+			try (
 					PreparedStatement stmt = conn.prepareStatement(sqlQuery);
 					ResultSet rs = stmt.executeQuery()) { 
 				
@@ -63,19 +60,69 @@ public class ContatoDAO {
 		
 		return contatosList; 
 	}
-
+	
+	// Inserir contacto
 	public boolean inserir(Contato c) {
-		// TODO Auto-generated method stub
-		return false;
+	    String sqlQuery = "INSERT INTO contato (nome, dataNascimento, telefone, email, endereco, estado, cidade) "+"VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+	    try (PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+	        stmt.setString(1, c.getNome());
+	        stmt.setDate(2, c.getDataNascimento() != null ? new java.sql.Date(c.getDataNascimento().getTime()) : null);
+	        stmt.setString(3, c.getTelefone());
+	        stmt.setString(4, c.getEmail());
+	        stmt.setString(5, c.getEndereco());
+	        stmt.setString(6, c.getEstado());
+	        stmt.setString(7, c.getCidade());
+
+	        int rows = stmt.executeUpdate();
+	        System.out.println("✅ Inserção realizada. Linhas afetadas: " + rows);
+	        return rows > 0;
+	    } catch (SQLException e) {
+	        System.err.println("❌ Erro ao inserir contato: " + e.getMessage());
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
 
-	public boolean remover(int id) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	// Atualizar contacto
 	public boolean atualizar(Contato c) {
-		// TODO Auto-generated method stub
-		return false;
+	    String sqlQuery = "UPDATE contato SET nome = ?, dataNascimento = ?, telefone = ?, email = ?, endereco = ?, estado = ?, cidade = ? WHERE id = ?";
+
+	    try (PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+	        stmt.setString(1, c.getNome());
+	        stmt.setDate(2, c.getDataNascimento() != null ? new java.sql.Date(c.getDataNascimento().getTime()) : null);
+	        stmt.setString(3, c.getTelefone());
+	        stmt.setString(4, c.getEmail());
+	        stmt.setString(5, c.getEndereco());
+	        stmt.setString(6, c.getEstado());
+	        stmt.setString(7, c.getCidade());
+	        stmt.setInt(8, c.getId());
+
+	        int rows = stmt.executeUpdate();
+	        System.out.println("✅ Atualização realizada. Linhas afetadas: " + rows);
+	        return rows > 0;
+	    } catch (SQLException e) {
+	        System.err.println("❌ Erro ao atualizar contato: " + e.getMessage());
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
+	
+	// Remover contacto
+	public boolean remover(int id) {
+	    String sqlQuery = "DELETE FROM contato WHERE id = ?";
+
+	    try (PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+	        stmt.setInt(1, id);
+
+	        int rows = stmt.executeUpdate();
+	        System.out.println("✅ Remoção realizada. Linhas afetadas: " + rows);
+	        return rows > 0;
+	    } catch (SQLException e) {
+	        System.err.println("❌ Erro ao remover contato: " + e.getMessage());
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+
 }
