@@ -97,9 +97,29 @@ public class ContatoDAO {
 	        stmt.setString(6, c.getEstado());
 	        stmt.setString(7, c.getCidade());
 	        stmt.setInt(8, c.getId());
+	        
+	        // Log de atualização
+	        System.out.println("📦 Atualizando contato:");
+	        System.out.println("🆔 ID: " + c.getId());
+	        System.out.println("👤 Nome: " + c.getNome());
+	        System.out.println("📅 Data: " + c.getDataNascimento());
+	        System.out.println("📞 Telefone: " + c.getTelefone());
+	        System.out.println("📧 Email: " + c.getEmail());
+	        System.out.println("🏠 Endereço: " + c.getEndereco());
+	        System.out.println("🌍 Estado: " + c.getEstado());
+	        System.out.println("🏙️ Cidade: " + c.getCidade());
 
+	        
+	        // Executa a atualização
 	        int rows = stmt.executeUpdate();
 	        System.out.println("✅ Atualização realizada. Linhas afetadas: " + rows);
+	        
+	        // Log detalhado
+	        System.out.println("📦 Atualizando contato com ID: " + c.getId());
+	        System.out.println("🧪 SQL: " + sqlQuery);
+	        System.out.println("🧪 Nome: " + c.getNome());
+	        System.out.println("🧪 ID: " + c.getId());
+
 	        return rows > 0;
 	    } catch (SQLException e) {
 	        System.err.println("❌ Erro ao atualizar contato: " + e.getMessage());

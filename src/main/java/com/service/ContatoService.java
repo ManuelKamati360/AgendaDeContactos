@@ -5,6 +5,7 @@ import com.database.MySqlConnectionEE;
 import com.model.Contato;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -58,7 +59,7 @@ public class ContatoService {
         try (Connection conn = MySqlConnectionEE.getConnection()) {
             ContatoDAO dao = new ContatoDAO(conn);
             return dao.atualizar(c);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
