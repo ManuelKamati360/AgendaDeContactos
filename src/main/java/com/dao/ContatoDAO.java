@@ -33,19 +33,19 @@ public class ContatoDAO {
 			String sqlQuery = "SELECT id, nome, dataNascimento, telefone, email, endereco, estado, cidade FROM contato LIMIT 10";
 
 			try (
-					PreparedStatement stmt = conn.prepareStatement(sqlQuery);
-					ResultSet rs = stmt.executeQuery()) { 
+					PreparedStatement preparedStatement = conn.prepareStatement(sqlQuery);
+					ResultSet resultSet = preparedStatement.executeQuery()) { 
 				
-						while (rs.next()) { 					
+						while (resultSet.next()) { 					
 							Contato contato = new Contato(); 
-							contato.setId(rs.getInt("id"));
-							contato.setNome(rs.getString("nome"));
-							contato.setEmail(rs.getString("email"));
-							contato.setTelefone(rs.getString("telefone"));
-							contato.setDataNascimento(rs.getDate("dataNascimento"));
-							contato.setEndereco(rs.getString("endereco"));
-							contato.setEstado(rs.getString("estado"));
-							contato.setCidade(rs.getString("cidade"));
+							contato.setId(resultSet.getInt("id"));
+							contato.setNome(resultSet.getString("nome"));
+							contato.setEmail(resultSet.getString("email"));
+							contato.setTelefone(resultSet.getString("telefone"));
+							contato.setDataNascimento(resultSet.getDate("dataNascimento"));
+							contato.setEndereco(resultSet.getString("endereco"));
+							contato.setEstado(resultSet.getString("estado"));
+							contato.setCidade(resultSet.getString("cidade"));
 							
 							contatosList.add(contato); 
 						} 
@@ -61,20 +61,78 @@ public class ContatoDAO {
 		return contatosList; 
 	}
 	
+	
+	// Buscar contacto por ID
+	public Contato buscarPorId(int id) {
+	    String sql = "SELECT * FROM contato WHERE id = ?";
+	    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        stmt.setInt(1, id);
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            Contato c = new Contato();
+	            c.setId(rs.getInt("id"));
+	            c.setNome(rs.getString("nome"));
+	            c.setDataNascimento(rs.getDate("dataNascimento"));
+	            c.setTelefone(rs.getString("telefone"));
+	            c.setEmail(rs.getString("email"));
+	            c.setEndereco(rs.getString("endereco"));
+	            c.setEstado(rs.getString("estado"));
+	            c.setCidade(rs.getString("cidade"));
+	            return c;
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+
+	
+	// Buscar contacto que contenha um texto específico em um de seus campos (full-text search)...
+	public List<Contato> buscarPorTexto(String texto) {
+	    List<Contato> contatos = new ArrayList<>();
+	    String sql = "SELECT * FROM contato WHERE nome LIKE ? OR email LIKE ? OR telefone LIKE ?";
+	    try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+	        
+	    		String likeTerm = "%" + texto + "%";
+	        preparedStatement.setString(1, likeTerm);
+	        preparedStatement.setString(2, likeTerm);
+	        preparedStatement.setString(3, likeTerm);
+	        ResultSet resultSet = preparedStatement.executeQuery();
+	        
+	        while (resultSet.next()) {
+	            Contato contato = new Contato();
+	            contato.setId(resultSet.getInt("id"));
+	            contato.setNome(resultSet.getString("nome"));
+	            contato.setDataNascimento(resultSet.getDate("dataNascimento"));
+	            contato.setTelefone(resultSet.getString("telefone"));
+	            contato.setEmail(resultSet.getString("email"));
+	            contato.setEndereco(resultSet.getString("endereco"));
+	            contato.setEstado(resultSet.getString("estado"));
+	            contato.setCidade(resultSet.getString("cidade"));
+	            contatos.add(contato);
+	        }
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return contatos;
+	}
+
+	
 	// Inserir contacto
-	public boolean inserir(Contato c) {
+	public boolean inserir(Contato contato) {
 	    String sqlQuery = "INSERT INTO contato (nome, dataNascimento, telefone, email, endereco, estado, cidade) "+"VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-	    try (PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
-	        stmt.setString(1, c.getNome());
-	        stmt.setDate(2, c.getDataNascimento() != null ? new java.sql.Date(c.getDataNascimento().getTime()) : null);
-	        stmt.setString(3, c.getTelefone());
-	        stmt.setString(4, c.getEmail());
-	        stmt.setString(5, c.getEndereco());
-	        stmt.setString(6, c.getEstado());
-	        stmt.setString(7, c.getCidade());
+	    try (PreparedStatement preparedStatement = conn.prepareStatement(sqlQuery)) {
+	        preparedStatement.setString(1, contato.getNome());
+	        preparedStatement.setDate(2, contato.getDataNascimento() != null ? new java.sql.Date(contato.getDataNascimento().getTime()) : null);
+	        preparedStatement.setString(3, contato.getTelefone());
+	        preparedStatement.setString(4, contato.getEmail());
+	        preparedStatement.setString(5, contato.getEndereco());
+	        preparedStatement.setString(6, contato.getEstado());
+	        preparedStatement.setString(7, contato.getCidade());
 
-	        int rows = stmt.executeUpdate();
+	        int rows = preparedStatement.executeUpdate();
 	        System.out.println("✅ Inserção realizada. Linhas afetadas: " + rows);
 	        return rows > 0;
 	    } catch (SQLException e) {
@@ -85,40 +143,40 @@ public class ContatoDAO {
 	}
 
 	// Atualizar contacto
-	public boolean atualizar(Contato c) {
+	public boolean atualizar(Contato contato) {
 	    String sqlQuery = "UPDATE contato SET nome = ?, dataNascimento = ?, telefone = ?, email = ?, endereco = ?, estado = ?, cidade = ? WHERE id = ?";
 
-	    try (PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
-	        stmt.setString(1, c.getNome());
-	        stmt.setDate(2, c.getDataNascimento() != null ? new java.sql.Date(c.getDataNascimento().getTime()) : null);
-	        stmt.setString(3, c.getTelefone());
-	        stmt.setString(4, c.getEmail());
-	        stmt.setString(5, c.getEndereco());
-	        stmt.setString(6, c.getEstado());
-	        stmt.setString(7, c.getCidade());
-	        stmt.setInt(8, c.getId());
+	    try (PreparedStatement preparedStatement = conn.prepareStatement(sqlQuery)) {
+	        preparedStatement.setString(1, contato.getNome());
+	        preparedStatement.setDate(2, contato.getDataNascimento() != null ? new java.sql.Date(contato.getDataNascimento().getTime()) : null);
+	        preparedStatement.setString(3, contato.getTelefone());
+	        preparedStatement.setString(4, contato.getEmail());
+	        preparedStatement.setString(5, contato.getEndereco());
+	        preparedStatement.setString(6, contato.getEstado());
+	        preparedStatement.setString(7, contato.getCidade());
+	        preparedStatement.setInt(8, contato.getId());
 	        
-	        // Log de atualização
+	        // Log de atualização de dados...
 	        System.out.println("📦 Atualizando contato:");
-	        System.out.println("🆔 ID: " + c.getId());
-	        System.out.println("👤 Nome: " + c.getNome());
-	        System.out.println("📅 Data: " + c.getDataNascimento());
-	        System.out.println("📞 Telefone: " + c.getTelefone());
-	        System.out.println("📧 Email: " + c.getEmail());
-	        System.out.println("🏠 Endereço: " + c.getEndereco());
-	        System.out.println("🌍 Estado: " + c.getEstado());
-	        System.out.println("🏙️ Cidade: " + c.getCidade());
+	        System.out.println("🆔 ID: " + contato.getId());
+	        System.out.println("👤 Nome: " + contato.getNome());
+	        System.out.println("📅 Data: " + contato.getDataNascimento());
+	        System.out.println("📞 Telefone: " + contato.getTelefone());
+	        System.out.println("📧 Email: " + contato.getEmail());
+	        System.out.println("🏠 Endereço: " + contato.getEndereco());
+	        System.out.println("🌍 Estado: " + contato.getEstado());
+	        System.out.println("🏙️ Cidade: " + contato.getCidade());
 
 	        
 	        // Executa a atualização
-	        int rows = stmt.executeUpdate();
+	        int rows = preparedStatement.executeUpdate();
 	        System.out.println("✅ Atualização realizada. Linhas afetadas: " + rows);
 	        
 	        // Log detalhado
-	        System.out.println("📦 Atualizando contato com ID: " + c.getId());
+	        System.out.println("📦 Atualizando contato com ID: " + contato.getId());
 	        System.out.println("🧪 SQL: " + sqlQuery);
-	        System.out.println("🧪 Nome: " + c.getNome());
-	        System.out.println("🧪 ID: " + c.getId());
+	        System.out.println("🧪 Nome: " + contato.getNome());
+	        System.out.println("🧪 ID: " + contato.getId());
 
 	        return rows > 0;
 	    } catch (SQLException e) {
@@ -132,10 +190,10 @@ public class ContatoDAO {
 	public boolean remover(int id) {
 	    String sqlQuery = "DELETE FROM contato WHERE id = ?";
 
-	    try (PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
-	        stmt.setInt(1, id);
+	    try (PreparedStatement preparedStatement = conn.prepareStatement(sqlQuery)) {
+	        preparedStatement.setInt(1, id);
 
-	        int rows = stmt.executeUpdate();
+	        int rows = preparedStatement.executeUpdate();
 	        System.out.println("✅ Remoção realizada. Linhas afetadas: " + rows);
 	        return rows > 0;
 	    } catch (SQLException e) {

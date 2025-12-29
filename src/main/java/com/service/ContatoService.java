@@ -24,7 +24,7 @@ public class ContatoService {
     }
 
     // Salvar contacto com validação
-    public boolean salvar(Contato c) {
+    public boolean inserir(Contato c) {
         if (c.getNome() == null || c.getNome().isEmpty() ||
             c.getTelefone() == null || c.getTelefone().isEmpty() ||
             c.getEmail() == null || c.getEmail().isEmpty()) {
@@ -65,9 +65,27 @@ public class ContatoService {
         }
     }
     
-    // Este m]etodo, ser]a usado para full-text search no futuro...
-	public Contato buscarPorId(int id) {
-		// TODO Auto-generated method stub
-		return null;
+    
+    // Buscar contacto por ID
+    public Contato buscarPorId(int id) {
+		try (Connection conn = MySqlConnectionEE.getConnection()) {
+			ContatoDAO dao = new ContatoDAO(conn);
+			return dao.buscarPorId(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+    
+    
+    // Este método, será usado para full-text search no futuro...
+	public List<Contato> buscarPorTexto(String texto) {
+		try (Connection conn = MySqlConnectionEE.getConnection()) {
+			ContatoDAO dao = new ContatoDAO(conn);
+			return dao.buscarPorTexto(texto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

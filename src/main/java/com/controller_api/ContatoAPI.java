@@ -28,92 +28,122 @@ public class ContatoAPI extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String pathInfo = request.getPathInfo(); // ex: /1
+        String search = request.getParameter("search"); // ex: ?search=manuel
+
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        if (pathInfo == null || pathInfo.equals("/")) {
-            // GET /api/contatos → lista todos
-            List<Contato> lista = null;
-			try {
-				lista = service.listarTodos();
-			} catch (NamingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-            response.setStatus(HttpServletResponse.SC_OK); // 200
-            out.print(new Gson().toJson(lista));
-        } else {
-            // GET /api/contatos/{id} → detalhe
-            try {
-                int id = Integer.parseInt(pathInfo.substring(1));
+        try {
+            if (pathInfo == null || pathInfo.equals("/")) {
+                // Caso 1: GET /api/contatos → lista todos
+                if (search != null && !search.isEmpty()) {
+                    // Caso 2: GET /api/contatos?search=xxx → busca por termo
+                    List<Contato> resultados = service.buscarPorTexto(search);
+                    if (!resultados.isEmpty()) {
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        out.print(new Gson().toJson(resultados));
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        out.print("{\"erro\":\"Nenhum contato encontrado\"}");
+                    }
+                } else {
+                    // Lista todos
+	                	try {
+	                	    List<Contato> lista = service.listarTodos();
+	                	    response.setStatus(HttpServletResponse.SC_OK);
+	                	    out.print(new Gson().toJson(lista));
+	                	} catch (NamingException e) {
+	                	    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	                	    out.print("{\"erro\":\"Erro ao listar contatos\"}");
+	                	    e.printStackTrace();
+	                	}
+                }
+            } else {
+                // Caso 3: GET /api/contatos/{id} → detalhe
+                String idStr = pathInfo.replaceAll("/", "");
+                int id = Integer.parseInt(idStr);
                 Contato c = service.buscarPorId(id);
+
                 if (c != null) {
-                    response.setStatus(HttpServletResponse.SC_OK); // 200
+                    response.setStatus(HttpServletResponse.SC_OK);
                     out.print(new Gson().toJson(c));
                 } else {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     out.print("{\"erro\":\"Contato não encontrado\"}");
                 }
-            } catch (NumberFormatException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
-                out.print("{\"erro\":\"ID inválido\"}");
             }
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.print("{\"erro\":\"ID inválido\"}");
         }
+
         out.flush();
     }
+
+//    @Override
+//    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+//            throws ServletException, IOException {
+//        String pathInfo = request.getPathInfo(); // ex: /1
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("UTF-8");
+//        PrintWriter out = response.getWriter();
+//
+//        if (pathInfo == null || pathInfo.equals("/")) {
+//            // GET /api/contatos → lista todos
+//            List<Contato> lista = null;
+//			try {
+//				lista = service.listarTodos();
+//			} catch (NamingException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//            response.setStatus(HttpServletResponse.SC_OK); // 200
+//            out.print(new Gson().toJson(lista));
+//        } else {
+//            // GET /api/contatos/{id} → detalhe
+//            try {
+//                int id = Integer.parseInt(pathInfo.substring(1));
+//                Contato c = service.buscarPorId(id);
+//                if (c != null) {
+//                    response.setStatus(HttpServletResponse.SC_OK); // 200
+//                    out.print(new Gson().toJson(c));
+//                } else {
+//                    response.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404
+//                    out.print("{\"erro\":\"Contato não encontrado\"}");
+//                }
+//            } catch (NumberFormatException e) {
+//                response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
+//                out.print("{\"erro\":\"ID inválido\"}");
+//            }
+//        }
+//        out.flush();
+//    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Contato c = new Contato();
-        c.setNome(request.getParameter("nome"));
-        c.setTelefone(request.getParameter("telefone"));
-
-        // Data de Nascimento
-        String dataStr = request.getParameter("dataNascimento");
-        Date data = null;
-        if (dataStr != null && !dataStr.isEmpty()) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                data = sdf.parse(dataStr);
-            } catch (ParseException e) {
-                System.err.println("❌ Erro ao converter data: " + dataStr);
-            }
-        }
-        c.setDataNascimento(data);
-
-        c.setEmail(request.getParameter("email"));   
-        c.setEndereco(request.getParameter("endereco"));
-        c.setEstado(request.getParameter("estado"));
-		c.setCidade(request.getParameter("cidade"));
-
-        boolean sucesso = service.salvar(c);
+        Contato c = new Gson().fromJson(request.getReader(), Contato.class);
+        boolean sucesso = service.inserir(c);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
         if (sucesso) {
-            response.setStatus(HttpServletResponse.SC_CREATED); // 201
+            response.setStatus(HttpServletResponse.SC_CREATED);
             response.getWriter().print("{\"sucesso\": true}");
         } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
-            response.getWriter().print("{\"erro\":\"Dados inválidos\"}");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().print("{\"erro\":\"Falha ao criar contato\"}");
         }
     }
+
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-    		String pathInfo = request.getPathInfo(); // ex: /1 para atualizar o contato com ID 1
-        int id = Integer.parseInt(pathInfo.substring(1));
-
-        // Ler JSON do corpo
-        BufferedReader reader = request.getReader();
-        Contato c = new Gson().fromJson(reader, Contato.class);
-
-        // Garantir que o ID vem da URL
+        int id = Integer.parseInt(request.getPathInfo().substring(1));
+        Contato c = new Gson().fromJson(request.getReader(), Contato.class);
         c.setId(id);
 
         boolean sucesso = service.atualizar(c);
@@ -129,6 +159,7 @@ public class ContatoAPI extends HttpServlet {
             response.getWriter().print("{\"erro\":\"Contato não encontrado\"}");
         }
     }
+
 
 
     @Override
