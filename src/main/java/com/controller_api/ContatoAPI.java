@@ -170,6 +170,8 @@ public class ContatoAPI extends HttpServlet {
         }
     }
     
+    // OPTIONS /api/contatos/*
+    // Este método, servem para liberação completa de CORS para requisições do frontend rodando em servidor diferente...
     @Override
     protected void doOptions(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
