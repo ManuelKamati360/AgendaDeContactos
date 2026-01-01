@@ -24,9 +24,16 @@ import javax.naming.NamingException;
 public class ContatoAPI extends HttpServlet {
     private ContatoService service = new ContatoService();
 
+    // GET /api/contatos ou /api/contatos/{id} ou /api/contatos?search=xxx
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+    		// Estas linhas de código, servem para liberação parcial de CORS para requisições do frontend rodando em servidor diferente...
+	    	response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+	    	response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+    	
         String pathInfo = request.getPathInfo(); // ex: /1
         String search = request.getParameter("search"); // ex: ?search=manuel
 
@@ -48,7 +55,7 @@ public class ContatoAPI extends HttpServlet {
                         out.print("{\"erro\":\"Nenhum contato encontrado\"}");
                     }
                 } else {
-                    // Lista todos
+                    // Adicionando todos os dados na lista e serializando todos em um arquivo JSON...
 	                	try {
 	                	    List<Contato> lista = service.listarTodos();
 	                	    response.setStatus(HttpServletResponse.SC_OK);
@@ -81,48 +88,15 @@ public class ContatoAPI extends HttpServlet {
         out.flush();
     }
 
-//    @Override
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//        String pathInfo = request.getPathInfo(); // ex: /1
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        PrintWriter out = response.getWriter();
-//
-//        if (pathInfo == null || pathInfo.equals("/")) {
-//            // GET /api/contatos → lista todos
-//            List<Contato> lista = null;
-//			try {
-//				lista = service.listarTodos();
-//			} catch (NamingException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//            response.setStatus(HttpServletResponse.SC_OK); // 200
-//            out.print(new Gson().toJson(lista));
-//        } else {
-//            // GET /api/contatos/{id} → detalhe
-//            try {
-//                int id = Integer.parseInt(pathInfo.substring(1));
-//                Contato c = service.buscarPorId(id);
-//                if (c != null) {
-//                    response.setStatus(HttpServletResponse.SC_OK); // 200
-//                    out.print(new Gson().toJson(c));
-//                } else {
-//                    response.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404
-//                    out.print("{\"erro\":\"Contato não encontrado\"}");
-//                }
-//            } catch (NumberFormatException e) {
-//                response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
-//                out.print("{\"erro\":\"ID inválido\"}");
-//            }
-//        }
-//        out.flush();
-//    }
-
+    // POST /api/contatos
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	
+    		// Estas linhas de código, servem para liberação parcial de CORS para requisições do frontend rodando em servidor diferente...
+		response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+		response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    	
         Contato c = new Gson().fromJson(request.getReader(), Contato.class);
         boolean sucesso = service.inserir(c);
 
@@ -138,10 +112,15 @@ public class ContatoAPI extends HttpServlet {
         }
     }
 
-
+    // PUT /api/contatos/{id}
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	
+    		// Estas linhas de código, servem para liberação parcial de CORS para requisições do frontend rodando em servidor diferente...
+		response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+		response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+		
         int id = Integer.parseInt(request.getPathInfo().substring(1));
         Contato c = new Gson().fromJson(request.getReader(), Contato.class);
         c.setId(id);
@@ -161,11 +140,15 @@ public class ContatoAPI extends HttpServlet {
     }
 
 
-
+	// DELETE /api/contatos/{id}
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+		// Estas linhas de código, servem para liberação parcial de CORS para requisições do frontend rodando em servidor diferente...
+		response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+		response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    	
     		String pathInfo = request.getPathInfo(); // ex: /1 para deletar o contato com ID 1
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -186,4 +169,14 @@ public class ContatoAPI extends HttpServlet {
             response.getWriter().print("{\"erro\":\"ID inválido\"}");
         }
     }
+    
+    @Override
+    protected void doOptions(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
 }

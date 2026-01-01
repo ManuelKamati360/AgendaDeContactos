@@ -36,7 +36,7 @@ public class DiagnosticoAPI extends HttpServlet {
             try (Connection conn = ds.getConnection()) {
                 System.out.println("✅ Conexão com banco estabelecida.");
 
-                ContatoDAO dao = new ContatoDAO();
+                ContatoDAO dao = new ContatoDAO(conn);
                 List<Contato> lista = dao.listarTodos();
 
                 System.out.println("🔍 Total de contatos encontrados: " + lista.size());
