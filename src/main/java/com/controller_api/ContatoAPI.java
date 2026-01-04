@@ -95,9 +95,10 @@ public class ContatoAPI extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     	
-    		// Estas linhas de código, servem para liberação parcial de CORS para requisições do frontend rodando em servidor diferente...
-		response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
-		response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+		// Estas linhas de código, servem para liberação parcial de CORS para requisições do frontend rodando em servidor diferente...
+    	response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+    	response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    	response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     	
         Contato c = new Gson().fromJson(request.getReader(), Contato.class);
         boolean sucesso = service.inserir(c);
@@ -119,9 +120,10 @@ public class ContatoAPI extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     	
-    		// Estas linhas de código, servem para liberação parcial de CORS para requisições do frontend rodando em servidor diferente...
-		response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
-		response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+		// Estas linhas de código, servem para liberação parcial de CORS para requisições do frontend rodando em servidor diferente...
+    	response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+    	response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    	response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
 		
         int id = Integer.parseInt(request.getPathInfo().substring(1));
         Contato c = new Gson().fromJson(request.getReader(), Contato.class);
@@ -148,14 +150,15 @@ public class ContatoAPI extends HttpServlet {
             throws ServletException, IOException {
         
 		// Estas linhas de código, servem para liberação parcial de CORS para requisições do frontend rodando em servidor diferente...
-		response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
-		response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    	response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+    	response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    	response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     	
-    		String pathInfo = request.getPathInfo(); // ex: /1 para deletar o contato com ID 1
+    	String pathInfo = request.getPathInfo(); // ex: /1 para deletar o contato com ID 1
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        try {
+        try { 
             int id = Integer.parseInt(pathInfo.substring(1));
             
             boolean sucesso = service.remover(id);

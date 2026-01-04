@@ -2,6 +2,7 @@ package com.controller_api;
 
 import com.model.Contato;
 import com.dao.ContatoDAO;
+import com.database.MySqlConnectionEE;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,10 +10,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.sql.DataSource;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -30,10 +28,8 @@ public class DiagnosticoAPI extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try {
-            InitialContext ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/agendaDB");
 
-            try (Connection conn = ds.getConnection()) {
+            try (Connection conn = MySqlConnectionEE.getConnection()) {
                 System.out.println("✅ Conexão com banco estabelecida.");
 
                 ContatoDAO dao = new ContatoDAO(conn);
