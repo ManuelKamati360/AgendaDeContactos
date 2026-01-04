@@ -32,6 +32,8 @@ public class ContatoAPI extends HttpServlet {
     		// Estas linhas de código, servem para liberação parcial de CORS para requisições do frontend rodando em servidor diferente...
 	    	response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
 	    	response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+	    	response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+
 
     	
         String pathInfo = request.getPathInfo(); // ex: /1
