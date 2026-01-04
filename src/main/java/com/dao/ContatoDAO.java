@@ -95,7 +95,8 @@ public class ContatoDAO {
 	    try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 	        
 	    		String likeTerm = "%" + texto + "%";
-	        preparedStatement.setString(1, likeTerm); 
+	        preparedStatement.setString(1, likeTerm);
+	        preparedStatement.setString(2, likeTerm);
 	        preparedStatement.setString(3, likeTerm);
 	        preparedStatement.setString(4, likeTerm);
 	        preparedStatement.setString(5, likeTerm);
