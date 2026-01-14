@@ -62,15 +62,6 @@ public class Contato {
 		this._cidade = _cidade;
 	}
 	
-	public Contato(int _id, String _nome, String _email, String _telefone, String _endereco, String _estado, String _cidade) {
-		this._nome = _nome;
-		this._telefone = _telefone;
-		this._email = _email;
-		this._endereco = _endereco;
-		this._estado = _estado;
-		this._cidade = _cidade;
-	}
-	
 	public Contato() {
 		this._nome = "";
 		this._dataNascimento = null;

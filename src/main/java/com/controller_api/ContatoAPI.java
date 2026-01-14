@@ -10,16 +10,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.naming.NamingException;
 
+@SuppressWarnings("serial")
 @WebServlet("/api/contatos/*")
 public class ContatoAPI extends HttpServlet {
     private ContatoService service = new ContatoService();
@@ -33,61 +30,59 @@ public class ContatoAPI extends HttpServlet {
 	    	response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
 	    	response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 	    	response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-
-
-    	
-        String pathInfo = request.getPathInfo(); // ex: /1
-        String search = request.getParameter("search"); // ex: ?search=manuel
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        PrintWriter out = response.getWriter();
-
-        try {
-            if (pathInfo == null || pathInfo.equals("/")) {
-                // Caso 1: GET /api/contatos → lista todos
-                if (search != null && !search.isEmpty()) {
-                    // Caso 2: GET /api/contatos?search=xxx → busca por termo
-                    List<Contato> resultados = service.buscarPorTexto(search);
-                    if (!resultados.isEmpty()) {
-                        response.setStatus(HttpServletResponse.SC_OK);
-                        out.print(new Gson().toJson(resultados));
-                    } else {
-                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                        out.print("{\"erro\":\"Nenhum contato encontrado\"}");
-                    }
-                } else {
-                    // Adicionando todos os dados na lista e serializando todos em um arquivo JSON...
-	                	try {
-	                	    List<Contato> lista = service.listarTodos();
-	                	    response.setStatus(HttpServletResponse.SC_OK);
-	                	    out.print(new Gson().toJson(lista));
-	                	} catch (NamingException e) {
-	                	    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-	                	    out.print("{\"erro\":\"Erro ao listar contatos\"}");
-	                	    e.printStackTrace();
-	                	}
-                }
-            } else {
-                // Caso 3: GET /api/contatos/{id} → detalhe
-                String idStr = pathInfo.replaceAll("/", "");
-                int id = Integer.parseInt(idStr);
-                Contato c = service.buscarPorId(id);
-
-                if (c != null) {
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    out.print(new Gson().toJson(c));
-                } else {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    out.print("{\"erro\":\"Contato não encontrado\"}");
-                }
-            }
-        } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"erro\":\"ID inválido\"}");
-        }
-
-        out.flush();
+	
+	        String pathInfo = request.getPathInfo(); // ex: /1
+	        String search = request.getParameter("search"); // ex: ?search=manuel
+	
+	        response.setContentType("application/json");
+	        response.setCharacterEncoding("UTF-8");
+	        PrintWriter out = response.getWriter();
+	
+	        try {
+	            if (pathInfo == null || pathInfo.equals("/")) {
+	                // Caso 1: GET /api/contatos → lista todos
+	                if (search != null && !search.isEmpty()) {
+	                    // Caso 2: GET /api/contatos?search=xxx → busca por termo
+	                    List<Contato> resultados = service.buscarPorTexto(search);
+	                    if (!resultados.isEmpty()) {
+	                        response.setStatus(HttpServletResponse.SC_OK);
+	                        out.print(new Gson().toJson(resultados));
+	                    } else {
+	                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	                        out.print("{\"erro\":\"Nenhum contato encontrado\"}");
+	                    }
+	                } else {
+	                    // Adicionando todos os dados na lista e serializando todos em um arquivo JSON...
+		                	try {
+		                	    List<Contato> lista = service.listarTodos();
+		                	    response.setStatus(HttpServletResponse.SC_OK);
+		                	    out.print(new Gson().toJson(lista));
+		                	} catch (NamingException e) {
+		                	    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		                	    out.print("{\"erro\":\"Erro ao listar contatos\"}");
+		                	    e.printStackTrace();
+		                	}
+	                }
+	            } else {
+	                // Caso 3: GET /api/contatos/{id} → detalhe
+	                String idStr = pathInfo.replaceAll("/", "");
+	                int id = Integer.parseInt(idStr);
+	                Contato c = service.buscarPorId(id);
+	
+	                if (c != null) {
+	                    response.setStatus(HttpServletResponse.SC_OK);
+	                    out.print(new Gson().toJson(c));
+	                } else {
+	                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	                    out.print("{\"erro\":\"Contato não encontrado\"}");
+	                }
+	            }
+	        } catch (NumberFormatException e) {
+	            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	            out.print("{\"erro\":\"ID inválido\"}");
+	        }
+	
+	        out.flush();
     }
 
     // POST /api/contatos
