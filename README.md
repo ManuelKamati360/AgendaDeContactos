@@ -1,4 +1,4 @@
-# PROJECTO - AGENDA DE CONTATOS (BACKEND)
+# PROJECTO - AGENDA DE CONTATOS (FRONTEND)
 Este projeceto, teve como principal objectivo, introduzir os conceitos de desenvolvimento de um sistema/webapp em Java Web ou JEE. Bem como, a implementação de uma API RESTfull em Java. Simulando um "__SPA__" com Java...
 
 Pois, ele permitiu conhecer e aplicar diversas técnicas e tecnologias envolvidas no processo de desenvolvimento web e não só, como:  
@@ -58,7 +58,7 @@ Foi construida, usando a linguagem Java sob o padrão __API-RESTfull__. Usando e
 - "__/diagnostico__": usado para verificar o estado de funcionamentos dos serviços do sistema, via browser...
 
 ##### SGBD MySQL  
-Foi usado para a persistencia dos dados do sistema, criando-se um banco com uma única entidade que dela são extraídas as métricas e aplicado o CRUD dos do sistema. Apartir de query's SQL, Views e Stored Procedures. Encontrados no directório ([AgendaDeContactos/docs/diagramas"](https://github.com/ManuelKamati360/AgendaDeContactos/tree/main/docs/db/script))"...
+Foi usado para a persistencia dos dados do sistema, criando-se um banco com uma única entidade que dela são extraídas as métricas e aplicado o CRUD dos do sistema. Apartir de query's SQL, Views e Stored Procedures. Encontrados no directório ([AgendaDeContactos/docs/db/script"](https://github.com/ManuelKamati360/AgendaDeContactos/tree/main/docs/db/script))"...
 
 
 ## APACHE TOMCAT SERVER
