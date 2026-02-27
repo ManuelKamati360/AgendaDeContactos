@@ -1,4 +1,4 @@
-# PROJECTO - AGENDA DE CONTATOS UI
+# PROJECTO - AGENDA DE CONTATOS (BACKEND)
 Este projeceto, teve como principal objectivo, introduzir os conceitos de desenvolvimento de um sistema/webapp em Java Web ou JEE. Bem como, a implementação de uma API RESTfull em Java. Simulando um "__SPA__" com Java...
 
 Pois, ele permitiu conhecer e aplicar diversas técnicas e tecnologias envolvidas no processo de desenvolvimento web e não só, como:  
